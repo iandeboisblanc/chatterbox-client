@@ -27,6 +27,22 @@ app.fetch = function() {
   });
 };
 
+app.clearMessages = function() {
+  $('#chats').empty();
+};
+
+app.addMessage = function(message) {
+  // create DOM element
+  var newMessage = document.createElement('div');
+  // change text in div to message
+  // append to $('#chats')
+  $('#chats').append(newMessage);
+
+};
+
+
+
 $(document).ready(function() {
   $('.fetch').click(app.fetch);
 });
+
