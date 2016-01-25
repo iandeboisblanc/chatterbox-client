@@ -1,4 +1,5 @@
 var app = {};
+app.server = 'https://api.parse.com/1/classes/chatterbox';
 
 app.init = function() {
   return;
@@ -6,7 +7,7 @@ app.init = function() {
 
 app.send = function(message) {
   $.ajax({
-    url: 'https://api.parse.com/1/classes/chatterbox',
+    url: app.server,
     type: 'POST',
     data: JSON.stringify(message),
     contentType: 'application/json',
@@ -21,19 +22,7 @@ app.send = function(message) {
 };
 
 app.fetch = function() {
-  // $.ajax({
-  //   url: 'https://api.parse.com/1/classes/chatterbox',
-  //   type: 'GET',
-  //   data: JSON.stringify(message),
-  //   contentType: 'application/json',
-  //   success: function (data) {
-  //     console.log('chatterbox: Message had been got');
-  //   },
-  //   error: function (data) {
-  //     console.error('chatterbox: Failed to nab dat message doe');
-  //   }
-  // });
-  $.get('https:api.parse.com/1/classes/chatterbox', function(data){
+  $.get(app.server, function(data){
     console.log(data);
   });
 };
