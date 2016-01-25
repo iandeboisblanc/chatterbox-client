@@ -1,13 +1,20 @@
-// YOUR CODE HERE:
+var app = {};
+
+app.init = function() {
+  return;
+};
+
+app.send = function() {
+  return;
+};
 
 var message = {
-  username: 'shawndrost',
-  text: 'trololo',
-  roomname: '4chan'
+  username: 'Benian deHung',
+  text: 'Welcome to Casa deHung, ya heard??!',
+  roomname: 'HR38'
 };
 
 $.ajax({
-  // This is the url you should use to communicate with the parse API server.
   url: 'https://api.parse.com/1/classes/chatterbox',
   type: 'POST',
   data: JSON.stringify(message),
@@ -16,7 +23,6 @@ $.ajax({
     console.log('chatterbox: Message sent');
   },
   error: function (data) {
-    // See: https://developer.mozilla.org/en-US/docs/Web/API/console.error
     console.error('chatterbox: Failed to send message');
   }
 });
