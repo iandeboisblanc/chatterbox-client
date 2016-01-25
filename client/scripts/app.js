@@ -20,10 +20,24 @@ app.send = function(message) {
   return;
 };
 
-var message = {
-  username: 'Benian deHung',
-  text: 'Welcome to Casa deHung, ya heard??!',
-  roomname: 'HR38'
+app.fetch = function() {
+  // $.ajax({
+  //   url: 'https://api.parse.com/1/classes/chatterbox',
+  //   type: 'GET',
+  //   data: JSON.stringify(message),
+  //   contentType: 'application/json',
+  //   success: function (data) {
+  //     console.log('chatterbox: Message had been got');
+  //   },
+  //   error: function (data) {
+  //     console.error('chatterbox: Failed to nab dat message doe');
+  //   }
+  // });
+  $.get('https:api.parse.com/1/classes/chatterbox', function(data){
+    console.log(data);
+  });
 };
 
-
+$(document).ready(function() {
+  $('.fetch').click(app.fetch);
+});
