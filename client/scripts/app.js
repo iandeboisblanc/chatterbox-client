@@ -37,7 +37,11 @@ app.addMessage = function(message) {
   // change text in div to message
   // append to $('#chats')
   $('#chats').append(newMessage);
+};
 
+app.addRoom = function(roomName) {
+  var newRoom = document.createElement('div');
+  $('#roomSelect').append(newRoom);
 };
 
 
