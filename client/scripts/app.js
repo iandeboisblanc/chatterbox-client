@@ -1,8 +1,27 @@
-var app = {};
+var app = {
+  username: undefined
+};
+
 app.server = 'https://api.parse.com/1/classes/chatterbox';
 
 app.init = function() {
-  return;
+
+  $(document).ready(function() {
+    $('.fetch').click(app.fetch);
+    $('.clear').click(app.clearMessages);
+    $('.dropdown-toggle').click(function() {
+      $('.dropdown-menu').toggle('fast');
+    });
+    if (!/(&|\?)username=/.test(window.location.search)) {
+      var newSearch = window.location.search;
+      if (newSearch !== '' & newSearch !== '?') {
+        newSearch += '&';
+      }
+      app.username = escapeHtml(prompt('What you be called doe?') || 'anonymous');
+      newSearch += 'username=' + app.username;
+      window.location.search = newSearch;
+    }
+  });
 };
 
 app.send = function(message) {
@@ -22,6 +41,7 @@ app.send = function(message) {
 };
 
 app.fetch = function() {
+  //currently pasting everything, regardless of what's already there
   $.get(app.server, function(data) {
     for (var i = 0; i < data.results.length; i++){
       app.addMessage(data.results[i]);
@@ -35,8 +55,8 @@ app.clearMessages = function() {
 
 app.addMessage = function(message) {
   var newMessage = $('<div class="chat"></div>').appendTo('#chats');
-  var username = $('<div class="username">'+ message.username +'</div>').appendTo(newMessage);
-  var messageBody = $('<div class="messageBody">' + message.text +'</div>').appendTo(newMessage);
+  var username = $('<div class="username">'+ escapeHtml(message.username) +'</div>').appendTo(newMessage);
+  var messageBody = $('<div class="messageBody">' + escapeHtml(message.text) +'</div>').appendTo(newMessage);
 };
 
 app.addRoom = function(roomName) {
@@ -44,10 +64,14 @@ app.addRoom = function(roomName) {
   $('#roomSelect').append(newRoom);
 };
 
-$(document).ready(function() {
-  $('.fetch').click(app.fetch);
-  $('.clear').click(app.clearMessages);
-});
+app.init();
+
+function escapeHtml(str) {
+    var div = document.createElement('div');
+    div.appendChild(document.createTextNode(str));
+    return div.innerHTML;
+}
+
 
 
 // var message = {
