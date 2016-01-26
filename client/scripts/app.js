@@ -32,11 +32,9 @@ app.clearMessages = function() {
 };
 
 app.addMessage = function(message) {
-  // create DOM element
-  var newMessage = document.createElement('div');
-  // change text in div to message
-  // append to $('#chats')
-  $('#chats').append(newMessage);
+  var newMessage = $('<div class="chat"></div>').appendTo('#chats');
+  var username = $('<div class="username">'+ message.username +'</div>').appendTo(newMessage);
+  var messageBody = $('<div class="messageBody">' + message.text +'</div>').appendTo(newMessage);
 };
 
 app.addRoom = function(roomName) {
@@ -50,3 +48,9 @@ $(document).ready(function() {
   $('.fetch').click(app.fetch);
 });
 
+
+// var message = {
+//           username: 'Mel Brooks',
+//           text: 'It\'s good to be the king',
+//           roomname: 'lobby'
+//         };
