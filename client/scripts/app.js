@@ -6,7 +6,7 @@ var app = {
 
 app.init = function() {
   $(document).ready(function() {
-    $('.submit').submit(app.handleSubmit);
+    $('.submit').click(app.handleSubmit);
     $('.fetch').click(app.fetch);
     $('.clear').click(app.clearMessages);
     if (!/(&|\?)username=/.test(window.location.search)) {
@@ -19,6 +19,7 @@ app.init = function() {
       window.location.search = newSearch;
     }
   });
+  app.fetch();
 };
 
 app.send = function(message) {
@@ -34,7 +35,6 @@ app.send = function(message) {
       console.error('chatterbox: Failed to send message');
     }
   });
-  return;
 };
 
 app.fetch = function() {
@@ -63,7 +63,7 @@ app.addMessage = function(message) {
 
 app.handleSubmit = function() {
   var text = $('textarea').val();
-  if (text) {
+  if (text.length > 0) {
     var message = {
       username: app.username,
       text: text,
@@ -87,6 +87,7 @@ function escapeHtml(str) {
   return div.innerHTML;
 }
 
+setInterval(app.fetch, 5000);
 
 
 // var message = {
