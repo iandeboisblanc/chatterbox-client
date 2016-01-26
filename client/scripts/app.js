@@ -22,8 +22,10 @@ app.send = function(message) {
 };
 
 app.fetch = function() {
-  $.get(app.server, function(data){
-    console.log(data);
+  $.get(app.server, function(data) {
+    for (var i = 0; i < data.results.length; i++){
+      app.addMessage(data.results[i]);
+    }
   });
 };
 
@@ -42,10 +44,9 @@ app.addRoom = function(roomName) {
   $('#roomSelect').append(newRoom);
 };
 
-
-
 $(document).ready(function() {
   $('.fetch').click(app.fetch);
+  $('.clear').click(app.clearMessages);
 });
 
 
