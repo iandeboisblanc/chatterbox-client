@@ -1,6 +1,7 @@
 var app = {
   username: escapeHtml(window.location.search).slice(10),
   server: 'https://api.parse.com/1/classes/chatterbox',
+  roomDirectory: {}, 
   currentRoom: undefined,
   mostRecentMessage: new Date('2006-01-25T20:05:21.180Z'),
   friends: {}
@@ -9,8 +10,6 @@ var app = {
 app.init = function() {
   $(document).ready(function() {
     $('.submit').click(app.handleSubmit);
-    $('.fetch').click(app.fetch);
-    $('.clear').click(app.clearMessages);
   });
   app.fetch();
 };
@@ -61,13 +60,23 @@ app.clearMessages = function() {
 };
 
 app.addMessage = function(message) {
-  var newMessage = $('<div class="chat"></div>').prependTo('#chats');
+  //check against existing rooms
+  var room = escapeHtml(message.roomname).trim();
+  // see if it is in our room directory
+  if (!app.roomDirectory[room]) {
+    app.roomDirectory[room] = room;
+    // append new room to DOM as an <option>
+    $('.rooms').append($('<option>' + room + '</option>'));
+  }
+  var newMessage = $('<div class="chat"></div>');
   var username = $('<div class="username"></div>').appendTo(newMessage);
   var name = $('<a href="#" class="username">'+ escapeHtml(message.username) +'</a>').appendTo(username);
   $('.username a').click(app.addFriend);
   var messageBody = $('<div class="messageBody">' + escapeHtml(message.text) +'</div>').appendTo(newMessage);
   var fuzzyTime = moment(new Date(message.createdAt)).format("MMMM Do YYYY, h:mm:ss a");
   var timeStamp = $('<div class="timeStamp">' + fuzzyTime +'</div>').appendTo(newMessage);
+  //if room = currentRoom 
+  newMessage.prependTo('#chats');
 };
 
 app.handleSubmit = function() {
