@@ -6,7 +6,7 @@ var app = {
 
 app.init = function() {
   $(document).ready(function() {
-    $('.submit').click(app.handleSubmit);
+    $('.submit').submit(app.handleSubmit);
     $('.fetch').click(app.fetch);
     $('.clear').click(app.clearMessages);
     if (!/(&|\?)username=/.test(window.location.search)) {
@@ -63,7 +63,7 @@ app.addMessage = function(message) {
 
 app.handleSubmit = function() {
   var text = $('textarea').val();
-  if (text.length > 0) {
+  if (text) {
     var message = {
       username: app.username,
       text: text,
