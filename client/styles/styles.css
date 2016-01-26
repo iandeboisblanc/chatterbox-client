@@ -83,13 +83,6 @@ form input[type=text] {
     padding: 10px;
 }
 
-.dropdown-menu {
-    display: none;
-    position: absolute;
-    background-color: steelblue;
-    padding: 10px;
+.timeStamp {
+    font-size: 10px;
 }
-
-
-
-

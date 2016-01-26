@@ -1,7 +1,8 @@
 var app = {
   username: escapeHtml(window.location.search).slice(10),
   server: 'https://api.parse.com/1/classes/chatterbox',
-  currentRoom: undefined
+  currentRoom: undefined,
+  mostRecentMessage: new Date('2006-01-25T20:05:21.180Z')
 };
 
 app.init = function() {
@@ -9,15 +10,6 @@ app.init = function() {
     $('.submit').click(app.handleSubmit);
     $('.fetch').click(app.fetch);
     $('.clear').click(app.clearMessages);
-    if (!/(&|\?)username=/.test(window.location.search)) {
-      var newSearch = window.location.search;
-      if (newSearch !== '' & newSearch !== '?') {
-        newSearch += '&';
-      }
-      app.username = escapeHtml(prompt('What you be called doe?') || 'anonymous');
-      newSearch += 'username=' + app.username;
-      window.location.search = newSearch;
-    }
   });
   app.fetch();
 };
@@ -38,14 +30,26 @@ app.send = function(message) {
 };
 
 app.fetch = function() {
-  app.clearMessages();
   $.ajax({
     url: app.server,
     type: 'GET',
     data: { 'order':'-createdAt' },
+    dataFilter:function(data) {
+      data = JSON.parse(data);
+      var newData = {results:[]};
+      for (var i = 0; i < data.results.length; i++) {
+        if(new Date(data.results[i].createdAt) > app.mostRecentMessage) {
+          newData.results.push(data.results[i]);
+        }
+      }
+      return JSON.stringify(newData);
+    },
     success: function (data) {
       for (var i = 0; i < data.results.length; i++) {
         app.addMessage(data.results[i]);
+      }
+      if(data.results[0]) {
+        app.mostRecentMessage = new Date(data.results[0].createdAt);
       }
     }
   });
@@ -56,9 +60,11 @@ app.clearMessages = function() {
 };
 
 app.addMessage = function(message) {
-  var newMessage = $('<div class="chat"></div>').appendTo('#chats');
+  var newMessage = $('<div class="chat"></div>').prependTo('#chats');
   var username = $('<div class="username">'+ escapeHtml(message.username) +'</div>').appendTo(newMessage);
   var messageBody = $('<div class="messageBody">' + escapeHtml(message.text) +'</div>').appendTo(newMessage);
+  var fuzzyTime = moment(new Date(message.createdAt)).format("MMMM Do YYYY, h:mm:ss a");;
+  var timeStamp = $('<div class="timeStamp">' + fuzzyTime +'</div>').appendTo(newMessage);
 };
 
 app.handleSubmit = function() {
@@ -79,6 +85,13 @@ app.addRoom = function(roomName) {
   $('#roomSelect').append(newRoom);
 };
 
+app.updateTime = function() {
+  var timeStamps = $('#chats .message .timeStamp');
+  for(var i = 0; i < timeStamps.length; i++) {
+
+  }
+};
+
 app.init();
 
 function escapeHtml(str) {
@@ -89,9 +102,3 @@ function escapeHtml(str) {
 
 setInterval(app.fetch, 5000);
 
-
-// var message = {
-//           username: 'Mel Brooks',
-//           text: 'It\'s good to be the king',
-//           roomname: 'lobby'
-//         };
