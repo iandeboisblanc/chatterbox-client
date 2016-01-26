@@ -1,17 +1,14 @@
 var app = {
-  username: undefined
+  username: escapeHtml(window.location.search).slice(10),
+  server: 'https://api.parse.com/1/classes/chatterbox',
+  currentRoom: undefined
 };
 
-app.server = 'https://api.parse.com/1/classes/chatterbox';
-
 app.init = function() {
-
   $(document).ready(function() {
+    $('.submit').click(app.handleSubmit);
     $('.fetch').click(app.fetch);
     $('.clear').click(app.clearMessages);
-    $('.dropdown-toggle').click(function() {
-      $('.dropdown-menu').toggle('fast');
-    });
     if (!/(&|\?)username=/.test(window.location.search)) {
       var newSearch = window.location.search;
       if (newSearch !== '' & newSearch !== '?') {
@@ -41,10 +38,15 @@ app.send = function(message) {
 };
 
 app.fetch = function() {
-  //currently pasting everything, regardless of what's already there
-  $.get(app.server, function(data) {
-    for (var i = 0; i < data.results.length; i++){
-      app.addMessage(data.results[i]);
+  app.clearMessages();
+  $.ajax({
+    url: app.server,
+    type: 'GET',
+    data: { 'order':'-createdAt' },
+    success: function (data) {
+      for (var i = 0; i < data.results.length; i++) {
+        app.addMessage(data.results[i]);
+      }
     }
   });
 };
@@ -59,6 +61,19 @@ app.addMessage = function(message) {
   var messageBody = $('<div class="messageBody">' + escapeHtml(message.text) +'</div>').appendTo(newMessage);
 };
 
+app.handleSubmit = function() {
+  var text = $('textarea').val();
+  if (text.length > 0) {
+    var message = {
+      username: app.username,
+      text: text,
+      roomname: app.currentRoom
+    };
+    app.send(message);
+  }
+  $('textarea').val('');
+};
+
 app.addRoom = function(roomName) {
   var newRoom = document.createElement('div');
   $('#roomSelect').append(newRoom);
@@ -67,9 +82,9 @@ app.addRoom = function(roomName) {
 app.init();
 
 function escapeHtml(str) {
-    var div = document.createElement('div');
-    div.appendChild(document.createTextNode(str));
-    return div.innerHTML;
+  var div = document.createElement('div');
+  div.appendChild(document.createTextNode(str));
+  return div.innerHTML;
 }
 
 
