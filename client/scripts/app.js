@@ -33,7 +33,7 @@ app.fetch = function() {
   $.ajax({
     url: app.server,
     type: 'GET',
-    data: { 'order':'-createdAt' },
+    data: { 'order':'-createdAt'},
     dataFilter:function(data) {
       data = JSON.parse(data);
       var newData = {results:[]};
@@ -45,7 +45,7 @@ app.fetch = function() {
       return JSON.stringify(newData);
     },
     success: function (data) {
-      for (var i = 0; i < data.results.length; i++) {
+      for (var i = data.results.length - 1; i >= 0; i--) {
         app.addMessage(data.results[i]);
       }
       if(data.results[0]) {
@@ -100,5 +100,5 @@ function escapeHtml(str) {
   return div.innerHTML;
 }
 
-setInterval(app.fetch, 5000);
+setInterval(app.fetch, 100);
 
