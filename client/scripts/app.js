@@ -4,13 +4,15 @@ var app = {
   roomDirectory: {}, 
   currentRoom: undefined,
   mostRecentMessage: new Date('2006-01-25T20:05:21.180Z'),
-  friends: {}
+  friends: {},
+  friendicator: false
 };
 
 app.init = function() {
   $(document).ready(function() {
     $('.submit').click(app.handleSubmit);
     $('.rooms').on('change', app.changeRoom);
+    $('.friendFilter').click(app.toggleFriendFilter);
   });
   app.fetch();
 };
@@ -69,13 +71,13 @@ app.addMessage = function(message) {
     app.roomDirectory[room] = room;
     $('.rooms').append($('<option/>').val(room).text(room));
   }
-  var newMessage = $('<div class="chat"></div>');
-  var username = $('<div class="username"></div>').appendTo(newMessage);
-  var name = $('<a href="#" class="username">'+ escapeHtml(message.username) +'</a>').appendTo(username);
+  var newMessage = $('<div class="chat"/>');
+  var username = $('<div class="username"/>').appendTo(newMessage);
+  var name = $('<a href="#" class="username"/>').text(escapeHtml(message.username)).appendTo(username);
   $('.username a').click(app.addFriend);
-  var messageBody = $('<div class="messageBody">' + escapeHtml(message.text) +'</div>').appendTo(newMessage);
+  var messageBody = $('<div class="messageBody"/>').text(escapeHtml(message.text)).appendTo(newMessage);
   var fuzzyTime = moment(new Date(message.createdAt)).format("MMMM Do YYYY, h:mm:ss a");
-  var timeStamp = $('<div class="timeStamp">' + fuzzyTime +'</div>').appendTo(newMessage);
+  var timeStamp = $('<div class="timeStamp"/>').text(fuzzyTime).appendTo(newMessage);
   if(room === app.currentRoom) {
     newMessage.prependTo('#chats');
   }
@@ -127,6 +129,18 @@ app.changeRoom = function() {
     app.clearMessages();
     app.fetch();
   }
+};
+
+app.toggleFriendFilter = function() {
+  $friendicator = $('#friendicator');
+  if(!app.friendicator) {
+    $friendicator.text('ON');
+  } else {
+    $friendicator.text('OFF');
+  }
+  app.friendicator = !app.friendicator;
+  app.clearMessages();
+  app.fetch();
 };
 
 app.init();
@@ -209,8 +223,20 @@ var shaneBot = function() {
   }
 };
 
-
-
+var thomasBot = function() {
+  var $rooms = $('.rooms');
+  var username = 'Thomas';
+  var text = 'foob';
+  for(var i = 3; i < $rooms.children().length; i++) {
+    var roomname = $rooms.children()[i].value;
+    var message = {
+      username: username,
+      text: text,
+      roomname: roomname
+    };
+    app.send(message);
+  }
+};
 
 
 
