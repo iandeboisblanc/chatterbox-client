@@ -5,6 +5,7 @@ var app = {
   currentRoom: undefined,
   mostRecentMessage: new Date('2006-01-25T20:05:21.180Z'),
   friends: {},
+  blocked: {},
   friendicator: false
 };
 
@@ -37,7 +38,7 @@ app.fetch = function() {
   $.ajax({
     url: app.server,
     type: 'GET',
-    data: { 'order':'-createdAt'},
+    data: { 'order':'-createdAt', 'limit': 1000},
     dataFilter:function(data) {
       data = JSON.parse(data);
       var newData = {results:[]};
@@ -74,7 +75,10 @@ app.addMessage = function(message) {
   var newMessage = $('<div class="chat"/>');
   var username = $('<div class="username"/>').appendTo(newMessage);
   var name = $('<a href="#" class="username"/>').text(escapeHtml(message.username)).appendTo(username);
-  $('.username a').click(app.addFriend);
+  var friendButton = $('<button class="friendButton"/>').text('Friend!').appendTo(username);
+  var blockButton = $('<button class="blockButton"/>').text('Block!').appendTo(username);
+  $('.friendButton').click(app.addFriend);
+  $('.blockButton').click(app.blockFriend);
   var messageBody = $('<div class="messageBody"/>').text(escapeHtml(message.text)).appendTo(newMessage);
   var fuzzyTime = moment(new Date(message.createdAt)).format("MMMM Do YYYY, h:mm:ss a");
   var timeStamp = $('<div class="timeStamp"/>').text(fuzzyTime).appendTo(newMessage);
@@ -84,6 +88,9 @@ app.addMessage = function(message) {
       if (!(username.text() in app.friends)) {
         return;
       }
+    }
+    if(username.text() in app.blocked) {
+      return;
     }
     newMessage.prependTo('#chats');
   }
@@ -123,6 +130,10 @@ app.addFriend = function() {
   app.friends[this.text] = this.text;
 };
 
+app.blockFriend = function() {
+  app.blocked[this.text] = this.text;
+};
+
 app.changeRoom = function() {
   if(this.selectedIndex === 0 || this.selectedIndex === 2) {
     app.currentRoom = undefined;
@@ -157,7 +168,7 @@ function escapeHtml(str) {
   return div.innerHTML;
 }
 
-setInterval(app.fetch, 100);
+setInterval(app.fetch, 1500);
 
 
 
@@ -165,7 +176,7 @@ var rohitBot = function() {
   var $rooms = $('.rooms');
   var username = 'Rohit';
   var text = 'Hey guys, party at my place this saturday! Bring juice!';
-  for(var i = 0; i < $rooms.children().length; i++) {
+  for(var i = 3; i < $rooms.children().length; i++) {
     var roomname = $rooms.children()[i].value;
     var message = {
       username: username,
@@ -180,7 +191,7 @@ var shaneBot = function() {
   var $rooms = $('.rooms');
   var juices = ['grape','apple','cranberry','orange','acai','banana-mango','pomegranate','Hawaiian Punch', 'tomato','tropical blend','pineapple','cranapple'];
   var username = 'Shane';
-  for(var i = 0; i < $rooms.children().length; i++) {
+  for(var i = 3; i < $rooms.children().length; i++) {
     var juice = juices[Math.floor(Math.random()*juices.length)];
     var text = 'You bet! Dibs on ' + juice +'!';
     var roomname = $rooms.children()[i].value;
@@ -196,21 +207,17 @@ var shaneBot = function() {
 var thomasBot = function() {
   var $rooms = $('.rooms');
   var username = 'Thomas';
-  var text = 'foob';
+  var textOptions = ['foob', 'boob', 'bloop', 'poop', 'shloopy', 'doopy', 'doo', 'glooboobooboo', 'gloob', 'oob', 'oopsy poopsy'];
   for(var i = 3; i < $rooms.children().length; i++) {
+    var text1 = textOptions[Math.floor(Math.random()*textOptions.length)];
+    var text2 = textOptions[Math.floor(Math.random()*textOptions.length)];
+    var text3 = textOptions[Math.floor(Math.random()*textOptions.length)];
     var roomname = $rooms.children()[i].value;
     var message = {
       username: username,
-      text: text,
+      text: text1 + ' ' + text2 + ' ' + text3,
       roomname: roomname
     };
     app.send(message);
   }
 };
-
-
-
-
-
-
-

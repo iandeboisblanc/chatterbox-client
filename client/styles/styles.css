@@ -104,3 +104,8 @@ form input[type=text] {
 #roomInput {
     display: none;
 }
+
+.username button {
+    margin-bottom: 3px;
+    margin-left: 5px;
+}
