@@ -64,6 +64,7 @@ app.clearMessages = function() {
 
 app.addMessage = function(message) {
   var room = escapeHtml(message.roomname).trim();
+  room = room.slice(0,30);
   if (!app.roomDirectory[room]) {
     app.roomDirectory[room] = room;
     $('.rooms').append($('<option/>').val(room).text(room));
@@ -137,4 +138,83 @@ function escapeHtml(str) {
 }
 
 setInterval(app.fetch, 100);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+var rohitBot = function() {
+  var $rooms = $('.rooms');
+  var username = 'Rohit';
+  var text = 'Hey guys, party at my place this saturday! Bring juice!';
+  for(var i = 0; i < $rooms.children().length; i++) {
+    var roomname = $rooms.children()[i].value;
+    var message = {
+      username: username,
+      text: text,
+      roomname: roomname
+    };
+    app.send(message);
+  }
+};
+
+var shaneBot = function() {
+  var $rooms = $('.rooms');
+  var juices = ['grape','apple','cranberry','orange','acai','banana-mango','pomegranate','Hawaiian Punch', 'tomato','tropical blend','pineapple','cranapple'];
+  var username = 'Shane';
+  for(var i = 0; i < $rooms.children().length; i++) {
+    var juice = juices[Math.floor(Math.random()*juices.length)];
+    var text = 'You bet! Dibs on ' + juice +'!';
+    var roomname = $rooms.children()[i].value;
+    var message = {
+      username: username,
+      text: text,
+      roomname: roomname
+    };
+    app.send(message);
+  }
+};
+
+
+
+
+
+
+
+
+
 
