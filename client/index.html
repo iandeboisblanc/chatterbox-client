@@ -18,8 +18,13 @@
     <div id="main">
       <h1>chatterbox</h1>
       <select class="rooms">
-        <option>Choose Room</option>
+        <option>Choose Room...</option>
+        <option class="createRoom">Create New Room</option>
+        <option>---------------------</option>
       </select>
+      <span class="roomInputSpan">
+        <input rows=1 cols= 30 id='roomInput'></input>
+      </span>
       <textarea rows=3 cols=80 id='message'></textarea>
       <button class="submit">Submit</button>
     </div>

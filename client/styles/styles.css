@@ -86,3 +86,13 @@ form input[type=text] {
 .timeStamp {
     font-size: 10px;
 }
+
+.rooms {
+    position: relative;
+    margin-bottom: 10px;
+    bottom: 0px;
+}
+
+#roomInput {
+    display: none;
+}

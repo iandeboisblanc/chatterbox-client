@@ -10,6 +10,7 @@ var app = {
 app.init = function() {
   $(document).ready(function() {
     $('.submit').click(app.handleSubmit);
+    $('.rooms').on('change', app.changeRoom);
   });
   app.fetch();
 };
@@ -22,6 +23,7 @@ app.send = function(message) {
     contentType: 'application/json',
     success: function (data) {
       console.log('chatterbox: Message sent');
+      app.fetch();
     },
     error: function (data) {
       console.error('chatterbox: Failed to send message');
@@ -57,16 +59,14 @@ app.fetch = function() {
 
 app.clearMessages = function() {
   $('#chats').empty();
+  app.mostRecentMessage = new Date('2006-01-25T20:05:21.180Z');
 };
 
 app.addMessage = function(message) {
-  //check against existing rooms
   var room = escapeHtml(message.roomname).trim();
-  // see if it is in our room directory
   if (!app.roomDirectory[room]) {
     app.roomDirectory[room] = room;
-    // append new room to DOM as an <option>
-    $('.rooms').append($('<option>' + room + '</option>'));
+    $('.rooms').append($('<option/>').val(room).text(room));
   }
   var newMessage = $('<div class="chat"></div>');
   var username = $('<div class="username"></div>').appendTo(newMessage);
@@ -75,13 +75,26 @@ app.addMessage = function(message) {
   var messageBody = $('<div class="messageBody">' + escapeHtml(message.text) +'</div>').appendTo(newMessage);
   var fuzzyTime = moment(new Date(message.createdAt)).format("MMMM Do YYYY, h:mm:ss a");
   var timeStamp = $('<div class="timeStamp">' + fuzzyTime +'</div>').appendTo(newMessage);
-  //if room = currentRoom 
-  newMessage.prependTo('#chats');
+  if(room === app.currentRoom) {
+    newMessage.prependTo('#chats');
+  }
 };
 
 app.handleSubmit = function() {
   var text = $('textarea').val();
   if (text.length > 0) {
+    if($('.rooms').prop('selectedIndex') === 1) {
+      app.currentRoom = $('#roomInput').val();
+      $('#roomInput').css('display','none');
+      if (!app.roomDirectory[app.currentRoom]) {
+        app.roomDirectory[app.currentRoom] = app.currentRoom;
+        $('.rooms').append($('<option/>').val(app.currentRoom).text(app.currentRoom));
+      }
+      $('.rooms').prop('selectedIndex', $('.rooms').children().length - 1);
+      $('#roomInput').val('');
+      app.clearMessages();
+      app.fetch();
+    }
     var message = {
       username: app.username,
       text: text,
@@ -99,6 +112,20 @@ app.addRoom = function(roomName) {
 
 app.addFriend = function() {
   app.friends[this.text] = this.text;
+};
+
+app.changeRoom = function() {
+  if(this.selectedIndex === 0 || this.selectedIndex === 2) {
+    app.currentRoom = undefined;
+  }
+  else if(this.selectedIndex === 1) {
+    $('#roomInput').css('display','inline');
+  }
+  else {
+    app.currentRoom = this[this.selectedIndex].value;
+    app.clearMessages();
+    app.fetch();
+  }
 };
 
 app.init();
