@@ -79,6 +79,12 @@ app.addMessage = function(message) {
   var fuzzyTime = moment(new Date(message.createdAt)).format("MMMM Do YYYY, h:mm:ss a");
   var timeStamp = $('<div class="timeStamp"/>').text(fuzzyTime).appendTo(newMessage);
   if(room === app.currentRoom) {
+    if(app.friendicator) {
+      //check if username in friendlist
+      if (!(username.text() in app.friends)) {
+        return;
+      }
+    }
     newMessage.prependTo('#chats');
   }
 };
@@ -152,42 +158,6 @@ function escapeHtml(str) {
 }
 
 setInterval(app.fetch, 100);
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
