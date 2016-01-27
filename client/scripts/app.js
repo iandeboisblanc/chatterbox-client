@@ -84,12 +84,11 @@ app.addMessage = function(message) {
   var timeStamp = $('<div class="timeStamp"/>').text(fuzzyTime).appendTo(newMessage);
   if(room === app.currentRoom) {
     if(app.friendicator) {
-      //check if username in friendlist
-      if (!(username.text() in app.friends)) {
+      if (!(name.text() in app.friends)) {
         return;
       }
     }
-    if(username.text() in app.blocked) {
+    if(name.text() in app.blocked) {
       return;
     }
     newMessage.prependTo('#chats');
@@ -127,11 +126,12 @@ app.addRoom = function(roomName) {
 };
 
 app.addFriend = function() {
-  app.friends[this.text] = this.text;
+  console.log('friends?');
+  app.friends[this.parentNode.children[0].text] = true;
 };
 
 app.blockFriend = function() {
-  app.blocked[this.text] = this.text;
+  app.blocked[this.parentNode.children[0].text] = true;
 };
 
 app.changeRoom = function() {
